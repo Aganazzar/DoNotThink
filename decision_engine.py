@@ -41,6 +41,9 @@ def novelty_score(option):
 def learn_score(option):
     return option.params.get("learn_index", 0)
 
+def challenge(option):
+    return option.params.get("challenge", 0)
+
 def emotional_score(option):
     return option.params.get("move_heart", 0)
 
@@ -162,64 +165,13 @@ def score(options, context):
 # Explanation
 # --------------------------
 def explain(scores):
-    print("Scores for all options:")
-    for opt, score_value in scores.items():
+    print("Scores for all options (highest to lowest):")
+    # Sort options by score descending
+    sorted_options = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    
+    for opt, score_value in sorted_options:
         print(f"{opt.name}: {score_value:.3f}")
     
-    best = max(scores, key=scores.get)
+    best = sorted_options[0][0]
     print("\nSelected option:")
     print(f"{best.name} with score: {scores[best]:.3f}")
-
-# --------------------------
-# Example usage
-# --------------------------
-if __name__ == "__main__":
-    # Define available free-time options
-    options = [
-        Option(
-            "Read book", 
-            {
-                "time_taken": 5,
-                "social_value": 2,
-                "novelty_meter": 3,
-                "learn_index": 5,
-                "move_heart": 1,
-                "fulfilment_value": 6
-            }
-        ),
-        Option(
-            "Go for walk", 
-            {
-                "time_taken": 3,
-                "social_value": 4,
-                "novelty_meter": 2,
-                "learn_index": 2,
-                "move_heart": 3,
-                "fulfilment_value": 4
-            }
-        ),
-        Option(
-            "Play game", 
-            {
-                "time_taken": 8,
-                "social_value": 1,
-                "novelty_meter": 4,
-                "learn_index": 1,
-                "move_heart": 5,
-                "fulfilment_value": 3
-            }
-        )
-    ]
-
-    # Define the current context
-    context = Context(device=1, pressing_matters=2)
-
-    # Apply constraints to filter out infeasible options
-    options = apply_constraints(options)
-
-    # Compute scores for all options
-    scores_dict = score(options, context)
-
-    # Display scores and the selected option
-    explain(scores_dict)
-
